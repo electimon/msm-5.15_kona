@@ -53,7 +53,7 @@
 		interconnects = <&aggre1_noc MASTER_USB3_0 &mc_virt SLAVE_EBI1>,
 				<&aggre1_noc MASTER_USB3_0 &config_noc SLAVE_IPA_CFG>,
 				<&gem_noc MASTER_APPSS_PROC &config_noc SLAVE_USB3_0>;
-		dwc3@a600000 {
+		dwc0: dwc3@a600000 {
 			compatible = "snps,dwc3";
 			reg = <0x0a600000 0xd93c>;
 			iommus = <&apps_smmu 0x0 0x0>;
@@ -61,7 +61,7 @@
 			qcom,iommu-dma-addr-pool = <0x90000000 0x60000000>;
 
 			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-			usb-phy = <&usb2_phy0>, <&usb_nop_phy>;
+			usb-phy = <&usb2_phy0>, <&usb_qmp_dp_phy>;
 			snps,has-lpm-erratum;
 			snps,hird-threshold = /bits/ 8 <0x10>;
 			snps,usb3_lpm_capable;
@@ -69,8 +69,8 @@
 			snps,dis-u2-entry-quirk;
 			snps,dis_u2_susphy_quirk;
 			tx-fifo-resize;
-			maximum-speed = "high-speed";
-			dr_mode = "peripheral";
+			maximum-speed = "super-speed-plus";
+			dr_mode = "otg";
 			usb-role-switch;
 		};
 
@@ -300,7 +300,7 @@
 		clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
 			<&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>,
 			<&gcc GCC_USB3_PRIM_PHY_PIPE_CLK_SRC>,
-			<&gcc USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK>,
+			<&usb3_phy_wrapper_gcc_usb30_pipe_clk>,
 			<&rpmhcc RPMH_CXO_CLK>,
 			<&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
 		clock-names = "aux_clk", "pipe_clk", "pipe_clk_mux",
@@ -373,7 +373,7 @@
 				<&aggre1_noc MASTER_USB3_1 &config_noc SLAVE_IPA_CFG>,
 				<&gem_noc MASTER_APPSS_PROC &config_noc SLAVE_USB3_1>;
 
-		dwc3@a800000 {
+		dwc1: dwc3@a800000 {
 			compatible = "snps,dwc3";
 			reg = <0xa800000 0xd93c>;
 			iommus = <&apps_smmu 0x20 0x0>;
@@ -381,7 +381,7 @@
 			qcom,iommu-dma-addr-pool = <0x90000000 0x60000000>;
 
 			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-			usb-phy = <&usb2_phy1>, <&usb_nop_phy>;
+			usb-phy = <&usb2_phy1>, <&usb_qmp_phy>;
 			snps,has-lpm-erratum;
 			snps,hird-threshold = /bits/ 8 <0x10>;
 			snps,usb3_lpm_capable;
@@ -389,7 +389,7 @@
 			snps,dis-u2-entry-quirk;
 			snps,dis_u2_susphy_quirk;
 			tx-fifo-resize;
-			maximum-speed = "high-speed";
+			maximum-speed = "super-speed";
 			dr_mode = "drd";
 		};
 	};
@@ -538,7 +538,7 @@
 		clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
 			 <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>,
 			 <&gcc GCC_USB3_SEC_PHY_PIPE_CLK_SRC>,
-			 <&gcc USB3_UNI_PHY_SEC_GCC_USB30_PIPE_CLK>,
+			 <&usb3_uni_phy_sec_gcc_usb30_pipe_clk>,
 			 <&rpmhcc RPMH_CXO_CLK>,
 			 <&gcc GCC_USB3_SEC_CLKREF_EN>,
 			 <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>;

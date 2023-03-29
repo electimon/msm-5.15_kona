@@ -35,6 +35,33 @@
 	};
 };
 
+&pm8150_0 {
+	/delete-node/ qcom,power-on@800;
+	qcom,power-on@800 {
+		compatible = "qcom,qpnp-power-on";
+		reg = <0x800>;
+		interrupts = <0x0 0x8 0x0 IRQ_TYPE_EDGE_BOTH>,
+			     <0x0 0x8 0x1 IRQ_TYPE_EDGE_BOTH>;
+		interrupt-names = "kpdpwr", "resin";
+		qcom,pon-dbc-delay = <15625>;
+		qcom,kpdpwr-sw-debounce;
+		qcom,system-reset;
+		qcom,store-hard-reset-reason;
+
+		qcom,pon_1 {
+			qcom,pon-type = <PON_POWER_ON_TYPE_KPDPWR>;
+			linux,code = <KEY_POWER>;
+			qcom,pull-up;
+		};
+
+		qcom,pon_2 {
+			qcom,pon-type = <PON_POWER_ON_TYPE_RESIN>;
+			linux,code = <KEY_VOLUMEDOWN>;
+			qcom,pull-up;
+		};
+	};
+};
+
 &pm8150_gpios {
 	key_home {
 		key_home_default: key_home_default {
@@ -152,6 +179,24 @@
 	nvmem = <&pm8150_sdam_2>;
 };
 
+&pm8150b_charger {
+	status = "ok";
+	dpdm-supply = <&usb2_phy0>;
+	smb5_vconn: qcom,smb5-vconn {
+		regulator-name = "smb5-vconn";
+	};
+
+	smb5_vbus: qcom,smb5-vbus {
+		regulator-name = "smb5-vbus";
+	};
+};
+
+&pm8150b_pdphy {
+	vdd-pdphy-supply = <&pm8150_l2>;
+	vbus-supply = <&smb5_vbus>;
+	vconn-supply = <&smb5_vconn>;
+};
+
 &pm8150b_gpios {
 	haptics_boost {
 		haptics_boost_default: haptics_boost_default {
@@ -187,4 +232,12 @@
 		enable-active-high;
 		status = "okay";
 	};
+};
+
+&usb0 {
+	status = "ok";
+	extcon = <&pm8150b_pdphy>, <&eud>;
+	#io-channel-cells = <1>;
+	io-channels= <&pm8150b_charger PSY_IIO_USB_REAL_TYPE>;
+	io-channel-names = "chg_type";
 };
