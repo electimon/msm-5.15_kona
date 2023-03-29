@@ -1,0 +1,233 @@
+/* Copyright (c) 2019, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	model = "nio";
+	compatible = "qcom,kona-nio", "qcom,kona-moto", "qcom,kona";
+	qcom,msm-id = <356 0x20001>;
+	qcom,board-id = <0 0xA000>;
+};
+
+#include "kona-moto-common-overlay-v2.dtsi"
+#include "kona-mot-nio-display.dtsi"
+
+&tlmm{
+	tlmm_gpio_key {
+		gpio_key_active: gpio_key_active {
+			mux {
+				pins = "gpio14";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio14";
+				drive-strength = <2>;
+				bias-pull-up;
+			};
+		};
+	};
+};
+
+&soc {
+	gpio_keys {
+		compatible = "gpio-keys";
+		label = "gpio-keys";
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&key_vol_up_default &gpio_key_active>;
+
+		vol_up {
+			label = "volume_up";
+			gpios = <&pm8150_gpios 6 GPIO_ACTIVE_LOW>;
+			linux,input-type = <1>;
+			linux,code = <KEY_VOLUMEUP>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+			linux,can-disable;
+		};
+
+		assist_key{
+			label = "assist_key";
+			gpios = <&tlmm 14 0x1>;
+			linux,input-type = <1>;
+			linux,code = <KEY_SEARCH>;
+			debounce-interval = <15>;
+			linux,can-disable;
+			gpio-key,wakeup;
+		};
+	};
+
+	 qcom,tz_gpio {
+		compatible = "qcom,tz_gpio";
+		tlmm-tz = <28>,
+			<29>,
+			<30>,
+			<31>,
+			<40>,
+			<41>,
+			<42>,
+			<43>;
+	};
+
+};
+
+&ufsphy_mem {
+	compatible = "qcom,ufs-phy-qmp-v4";
+
+	vdda-phy-supply = <&pm8150_l5>;
+	vdda-phy-always-on;
+	vdda-pll-supply = <&pm8150_l9>;
+	vdda-phy-max-microamp = <89900>;
+	vdda-pll-max-microamp = <18800>;
+
+	status = "ok";
+};
+
+&ufshc_mem {
+	vdd-hba-supply = <&ufs_phy_gdsc>;
+	vdd-hba-fixed-regulator;
+	vcc-supply = <&pm8150_l17>;
+	vcc-voltage-level = <2504000 2950000>;
+	vcc-low-voltage-sup;
+	vccq-supply = <&pm8150_l6>;
+	vccq2-supply = <&pm8150_s4>;
+	vcc-max-microamp = <800000>;
+	vccq-max-microamp = <800000>;
+	vccq2-max-microamp = <800000>;
+
+	qcom,vddp-ref-clk-supply = <&pm8150_l6>;
+	qcom,vddp-ref-clk-max-microamp = <100>;
+	qcom,vccq-parent-supply = <&pm8150a_s8>;
+	qcom,vccq-parent-max-microamp = <210000>;
+
+	status = "ok";
+};
+
+&usb0 {
+	extcon = <&pm8150b_pdphy>, <&pm8150b_pdphy>, <&eud>;
+
+	dwc3@a600000 {
+		xhci-hw-lpm-disable;
+	};
+};
+
+&usb1 {
+	status = "disabled";
+};
+
+&pm8150b_pdphy{
+	qcom,default-sink-caps = <5000 3000>, /* 5V @ 3A */
+				 <9000 3000>; /* 9V @ 3A */
+};
+
+
+&pcie1 {
+	status = "disabled";
+};
+
+&vendor {
+	bluetooth: bt_qca6390 {
+		compatible = "qca,qca6390";
+		pinctrl-names = "default";
+		pinctrl-0 = <&bt_en_sleep>;
+		qca,bt-reset-gpio = <&tlmm 21 0>; /* BT_EN */
+		qca,bt-sw-ctrl-gpio = <&tlmm 124 0>; /* SW_CTRL */
+		qca,bt-vdd-aon-supply = <&pm8150_s6>;
+		qca,bt-vdd-dig-supply = <&pm8150_s6>;
+		qca,bt-vdd-rfa1-supply = <&pm8150_s5>;
+		qca,bt-vdd-rfa2-supply = <&pm8150a_s8>;
+
+		qca,bt-vdd-aon-voltage-level = <950000 950000>;
+		qca,bt-vdd-dig-voltage-level = <950000 952000>;
+		qca,bt-vdd-rfa1-voltage-level = <1900000 1900000>;
+		qca,bt-vdd-rfa2-voltage-level = <1350000 1350000>;
+
+	};
+
+
+};
+
+&soc {
+	qcom,cnss-qca6390@b0000000 {
+		vdd-wlan-dig-supply = <&pm8150_s6>;
+	};
+};
+
+&soc_trip {
+	temperature = <5>;
+};
+
+&tlmm {
+	haptic_irq_default: haptic_irq_default {
+		mux {
+			pins = "gpio136";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio136";
+			drive-strength = <2>; /* 2 MA */
+			bias-pull-up;
+		};
+	};
+
+	haptic_rst_default: haptic_rst_default {
+		mux {
+			pins = "gpio141";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio141";
+			drive-strength = <2>; /* 2 MA */
+			bias-disable;
+			output-low;
+		};
+	};
+};
+
+&qupv3_se15_i2c {
+	status = "okay";
+
+	aw8695_haptic@5A {
+		compatible = "awinic,aw8695_haptic";
+		reg = <0x5A>;
+		reset-gpio = <&tlmm 141 0>;
+		irq-gpio = <&tlmm 136 0>;
+		vib_f0_pre = < 2350 >;
+		vib_f0_cali_percen = < 7 >;
+		vib_cont_drv_lvl = < 110 >;
+		vib_cont_drv_lvl_ov = < 120 >;
+		vib_cont_td = < 0x006C >;
+		vib_cont_zc_thr = < 0x0FF1 >;
+		vib_cont_num_brk = < 3 >;
+		haptic-context-gpio = <&tlmm 60 0>;
+		long-gain-normal = <0x80>;
+		long-gain-reduced = <0x50>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&haptic_irq_default &haptic_rst_default>;
+		status = "okay";
+	};
+};
+
+&spmi_bus {
+	qcom,pm8009@a {
+		status = "disabled";
+	};
+
+	qcom,pm8009@b {
+		status = "disabled";
+	};
+};

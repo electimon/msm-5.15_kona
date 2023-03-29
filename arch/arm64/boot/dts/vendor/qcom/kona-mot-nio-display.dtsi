@@ -1,0 +1,7 @@
+&pm8150l_lcdb {
+    status = "disabled";
+};
+
+&pm8150l_wled {
+	status = "disabled";
+};
