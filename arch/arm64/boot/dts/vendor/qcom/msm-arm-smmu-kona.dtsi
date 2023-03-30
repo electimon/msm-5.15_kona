@@ -2,11 +2,12 @@
 
 &soc {
 	kgsl_smmu: kgsl-smmu@3da0000 {
-		compatible = "qcom,qsmmu-v500";
+		compatible = "qcom,qsmmu-v500", "qcom,adreno-smmu";
 		reg = <0x3DA0000 0x10000>,
 			<0x3DC2000 0x20>;
 		reg-names = "base", "tcu-base";
 		#iommu-cells = <2>;
+		qcom,skip-init;
 		qcom,use-3-lvl-tables;
 		qcom,no-dynamic-asid;
 		#global-interrupts = <2>;
@@ -68,7 +69,10 @@
 			<0x15182000 0x20>;
 		reg-names = "base", "tcu-base";
 		#iommu-cells = <2>;
+		qcom,skip-init;
 		qcom,use-3-lvl-tables;
+		qcom,context-fault-retry;
+		qcom,handoff-smrs = <3>;
 		#global-interrupts = <2>;
 		#size-cells = <1>;
 		#address-cells = <1>;
@@ -173,10 +177,6 @@
 				<GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>,
 				<GIC_SPI 707 IRQ_TYPE_LEVEL_HIGH>;
 
-		interconnects = <&system_noc MASTER_GEM_NOC_SNOC
-				 &config_noc SLAVE_IMEM_CFG>;
-		qcom,active-only;
-
 		qcom,actlr =
 			/* For HF-0 TBU +3 deep PF */
 			<0x800 0x3ff 0x103>,
@@ -200,9 +200,7 @@
 				<0x15182200 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x0 0x400>;
-			interconnects = <&system_noc MASTER_GEM_NOC_SNOC
-					 &config_noc SLAVE_IMEM_CFG>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <36>;
 		};
 
@@ -212,9 +210,7 @@
 				<0x15182208 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x400 0x400>;
-			interconnects = <&system_noc MASTER_GEM_NOC_SNOC
-					 &config_noc SLAVE_IMEM_CFG>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <36>;
 		};
 
@@ -224,11 +220,7 @@
 				<0x15182210 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x800 0x400>;
-			qcom,regulator-names = "vdd";
-			vdd-supply = <&hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc>;
-			interconnects = <&mmss_noc MASTER_MDP0
-					 &mmss_noc SLAVE_MNOC_HF_MEM_NOC>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 
@@ -238,11 +230,7 @@
 				<0x15182218 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0xc00 0x400>;
-			qcom,regulator-names = "vdd";
-			vdd-supply = <&hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc>;
-			interconnects = <&mmss_noc MASTER_MDP0
-					 &mmss_noc SLAVE_MNOC_HF_MEM_NOC>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 
@@ -252,9 +240,7 @@
 				<0x15182220 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x1000 0x400>;
-			interconnects = <&compute_noc MASTER_NPU
-					 &compute_noc SLAVE_CDSP_MEM_NOC>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 
@@ -264,9 +250,7 @@
 				<0x15182228 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x1400 0x400>;
-			interconnects = <&compute_noc MASTER_NPU
-					 &compute_noc SLAVE_CDSP_MEM_NOC>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 
@@ -276,9 +260,7 @@
 				<0x15182230 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x1800 0x400>;
-			interconnects = <&system_noc MASTER_GEM_NOC_SNOC
-					 &config_noc SLAVE_IMEM_CFG>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 
@@ -288,11 +270,7 @@
 				<0x15182238 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x1c00 0x400>;
-			clock-names = "gcc_aggre_noc_pcie_tbu_clk";
-			clocks = <&gcc GCC_AGGRE_NOC_PCIE_TBU_CLK>;
-			interconnects = <&system_noc MASTER_GEM_NOC_SNOC
-					 &config_noc SLAVE_IMEM_CFG>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <36>;
 		};
 
@@ -302,11 +280,7 @@
 				<0x15182240 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x2000 0x400>;
-			qcom,regulator-names = "vdd";
-			vdd-supply = <&hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc>;
-			interconnects = <&mmss_noc MASTER_CAMNOC_SF
-					 &mmss_noc SLAVE_MNOC_SF_MEM_NOC>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 
@@ -316,11 +290,7 @@
 				<0x15182248 0x8>;
 			reg-names = "base", "status-reg";
 			qcom,stream-id-range = <0x2400 0x400>;
-			qcom,regulator-names = "vdd";
-			vdd-supply = <&hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc>;
-			interconnects = <&mmss_noc MASTER_CAMNOC_SF
-					 &mmss_noc SLAVE_MNOC_SF_MEM_NOC>;
-			qcom,active-only;
+			qcom,micro-idle;
 			qcom,iova-width = <32>;
 		};
 	};
