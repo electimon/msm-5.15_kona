@@ -21,6 +21,7 @@
 };
 
 #include "kona-moto-common-overlay-v2.dtsi"
+#include "kona-mot-nio-battery-thermal.dtsi"
 #include "kona-mot-nio-display.dtsi"
 
 &tlmm{
@@ -199,7 +200,7 @@
 };
 
 &qupv3_se15_i2c {
-	status = "okay";
+	status = "disabled";
 
 	aw8695_haptic@5A {
 		compatible = "awinic,aw8695_haptic";

@@ -2026,7 +2026,7 @@ static struct platform_driver rpmh_regulator_driver = {
 	.driver = {
 		.name		= "qcom,rpmh-regulator",
 		.of_match_table	= rpmh_regulator_match_table,
-		.sync_state	= regulator_proxy_consumer_sync_state,
+//		.sync_state	= regulator_proxy_consumer_sync_state,
 	},
 	.probe = rpmh_regulator_probe,
 };
