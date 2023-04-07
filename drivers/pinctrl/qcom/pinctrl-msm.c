@@ -650,6 +650,7 @@ static int msm_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
 	u32 val;
 
 	g = &pctrl->soc->groups[offset];
+	dev_err(pctrl->dev, "Megumin sends her regards, %s", g->name);
 
 	val = msm_readl_ctl(pctrl, g);
 
