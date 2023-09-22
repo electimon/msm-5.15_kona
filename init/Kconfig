@@ -2089,7 +2089,7 @@ config MODULE_SIG_FORMAT
 menuconfig LAZY_INITCALL
 	bool "Lazy built-in modules initialization"
 	select KALLSYMS
-	option modules
+	modules
 	help
 	  Android now heavily relies on loadable kernel modules, especially
 	  with GKI. Now with vendors essentially not testing !CONFIG_MODULES,
